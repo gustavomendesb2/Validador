@@ -1,0 +1,147 @@
+:root {
+  --papel:  #FBFAF7;
+  --tinta:  #1C1B19;
+  --suave:  #6B675F;
+  --linha:  #E0DBD0;
+  --verde:  #156D3B;
+  --verde-escuro: #0F532C;
+  --erro:   #B3261E;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { margin: 0; background: var(--papel); }
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--tinta);
+  -webkit-text-size-adjust: 100%;
+}
+
+.tela {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 20px 18px 48px;
+}
+
+/* Topo: onde ele está e quanto já fez */
+.topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.contador { font-size: 24px; font-weight: 800; }
+.progresso { font-size: 16px; color: var(--suave); }
+
+/* Fotos: o herói da tela */
+.fotos { display: grid; gap: 14px; margin-bottom: 18px; }
+.fotos figure { margin: 0; }
+.fotos img {
+  width: 100%;
+  height: auto;
+  max-height: 60vh;
+  object-fit: contain;
+  background: #fff;
+  border: 1px solid var(--linha);
+  border-radius: 14px;
+}
+.fotos figcaption {
+  text-align: center;
+  font-size: 15px;
+  color: var(--suave);
+  margin-top: 6px;
+}
+
+.selo {
+  background: #E8F3EC;
+  color: var(--verde-escuro);
+  font-weight: 700;
+  font-size: 16px;
+  text-align: center;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+/* Campos: rótulo grande em cima, caixa grande embaixo */
+.campos { display: grid; gap: 18px; }
+.campo { display: grid; gap: 8px; }
+.campo > span { font-size: 18px; font-weight: 700; }
+
+.campo input,
+.campo textarea {
+  font: inherit;
+  font-size: 20px;
+  width: 100%;
+  padding: 16px;
+  border: 2px solid var(--linha);
+  border-radius: 12px;
+  background: #fff;
+}
+.campo input:focus,
+.campo textarea:focus {
+  outline: none;
+  border-color: var(--verde);
+}
+.campo textarea { resize: vertical; }
+
+/* Sim / Não bem grandes */
+.sim-nao { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.sim-nao button {
+  font: inherit;
+  font-size: 20px;
+  font-weight: 700;
+  padding: 18px;
+  border: 2px solid var(--linha);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--tinta);
+  cursor: pointer;
+}
+.sim-nao button.sel {
+  background: var(--verde);
+  border-color: var(--verde);
+  color: #fff;
+}
+
+.erro { color: var(--erro); font-size: 17px; font-weight: 600; margin: 16px 0 0; }
+
+/* Botão principal: o gesto certo */
+.confirmar {
+  width: 100%;
+  margin-top: 26px;
+  font: inherit;
+  font-size: 23px;
+  font-weight: 800;
+  color: #fff;
+  background: var(--verde);
+  border: none;
+  border-radius: 14px;
+  padding: 22px;
+  cursor: pointer;
+}
+.confirmar:active { background: var(--verde-escuro); }
+.confirmar:disabled { opacity: 0.6; }
+
+/* Navegar */
+.navegacao { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+.navegacao button {
+  font: inherit;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 16px;
+  border: 2px solid var(--linha);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--tinta);
+  cursor: pointer;
+}
+.navegacao button:disabled { opacity: 0.4; }
+
+.aviso { font-size: 22px; text-align: center; margin-top: 40vh; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .confirmar, .sim-nao button, .navegacao button { transition: background 0.12s ease, border-color 0.12s ease; }
+}

@@ -1,0 +1,21 @@
+# Dependências
+node_modules/
+dist/
+dist-ssr/
+
+# Variáveis de ambiente — NUNCA commitar
+.env
+.env.local
+.env.*.local
+
+# Editor
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Vite
+*.local

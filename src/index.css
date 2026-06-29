@@ -1,0 +1,3 @@
+/* reset global mínimo — o estilo real está em App.css */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; }
