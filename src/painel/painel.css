@@ -1,0 +1,180 @@
+/* Painel do Gustavo. Ao contrário da tela do sogro, aqui a densidade é bem-vinda:
+   ele quer ver muita coisa de uma vez, no computador ou no celular. */
+
+.painel {
+  --p-fundo: #14161A;
+  --p-cartao: #1D2027;
+  --p-borda: #2C313A;
+  --p-texto: #E8E9EC;
+  --p-suave: #9AA0AA;
+  --p-verde: #3DBE72;
+  --p-ambar: #E0A33C;
+  --p-cinza: #5A6270;
+  --p-vermelho: #E06C6C;
+
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 22px 18px 60px;
+  color: var(--p-texto);
+  min-height: 100vh;
+}
+
+/* O painel pinta o fundo da página inteira. Precisa vencer o #root, que a tela
+   do sogro deixa em creme. */
+html:has(.painel),
+body:has(.painel),
+#root:has(.painel) { background: #14161A; }
+
+.p-titulo { font-size: 27px; font-weight: 800; margin: 0 0 4px; letter-spacing: -0.3px; }
+.p-sub { color: var(--p-suave); font-size: 16px; margin: 0 0 16px; }
+.p-aviso { text-align: center; margin-top: 30vh; color: var(--p-suave); font-size: 18px; }
+
+.p-voltar {
+  background: none; border: none; color: var(--p-suave);
+  font: inherit; font-size: 15px; padding: 6px 0 14px; cursor: pointer;
+}
+.p-voltar:hover { color: var(--p-texto); }
+
+.p-cartao {
+  background: var(--p-cartao);
+  border: 1px solid var(--p-borda);
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 14px;
+}
+.p-cartao h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--p-suave); margin: 0 0 10px; font-weight: 700; }
+
+.p-grade2 { display: grid; gap: 14px; grid-template-columns: 1fr 1fr; }
+@media (max-width: 620px) { .p-grade2 { grid-template-columns: 1fr; } }
+
+.p-numerao { font-size: 44px; font-weight: 800; line-height: 1; }
+.p-numerao span { font-size: 20px; font-weight: 600; color: var(--p-suave); }
+.p-forte { font-size: 19px; font-weight: 700; margin: 0 0 4px; }
+.p-legenda { color: var(--p-suave); font-size: 15px; line-height: 1.45; margin: 6px 0 0; }
+.p-prox { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--p-borda); }
+
+.p-barra {
+  height: 10px; background: #11131722; border: 1px solid var(--p-borda);
+  border-radius: 99px; overflow: hidden; margin: 14px 0 0;
+}
+.p-barra div { height: 100%; background: var(--p-verde); border-radius: 99px; }
+
+.p-mini { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 6px; }
+.p-mini button {
+  background: none; border: none; color: var(--p-ambar); font: inherit;
+  font-size: 15px; text-align: left; padding: 4px 0; cursor: pointer;
+}
+.p-mini button:hover { text-decoration: underline; }
+
+.p-botao {
+  width: 100%; font: inherit; font-size: 17px; font-weight: 700;
+  background: var(--p-verde); color: #0C1410; border: none;
+  border-radius: 12px; padding: 16px; cursor: pointer; margin-top: 6px;
+}
+
+/* Abas e busca */
+.p-abas { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 14px; }
+.p-abas button {
+  font: inherit; font-size: 15px; font-weight: 600;
+  background: var(--p-cartao); color: var(--p-suave);
+  border: 1px solid var(--p-borda); border-radius: 99px;
+  padding: 9px 14px; cursor: pointer;
+}
+.p-abas button span { opacity: 0.7; margin-left: 4px; }
+.p-abas button.sel { background: var(--p-texto); color: #14161A; border-color: var(--p-texto); }
+
+.p-busca {
+  width: 100%; font: inherit; font-size: 16px; padding: 13px 15px;
+  background: var(--p-cartao); color: var(--p-texto);
+  border: 1px solid var(--p-borda); border-radius: 11px;
+}
+.p-busca::placeholder { color: var(--p-suave); }
+.p-busca:focus { outline: none; border-color: var(--p-verde); }
+.p-contagem { margin: 12px 0 10px; }
+
+/* Grade de camisas */
+.p-grade {
+  display: grid; gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+.p-card {
+  background: var(--p-cartao); border: 1px solid var(--p-borda);
+  border-radius: 12px; padding: 10px; cursor: pointer;
+  text-align: left; font: inherit; color: var(--p-texto);
+  display: grid; gap: 4px;
+}
+.p-card:hover { border-color: var(--p-suave); }
+.p-card strong { font-size: 15px; line-height: 1.25; }
+.p-card small { font-size: 13px; color: var(--p-suave); line-height: 1.35; }
+/* nome de marca comprido não pode esticar o card e desalinhar a grade */
+.p-card strong, .p-card small {
+  display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden;
+}
+.p-card strong { -webkit-line-clamp: 1; }
+.p-card small { -webkit-line-clamp: 2; }
+
+.p-foto { position: relative; aspect-ratio: 3 / 4; border-radius: 9px; overflow: hidden; background: #0F1114; }
+.p-foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.p-sem { width: 100%; height: 100%; }
+
+.p-sinal {
+  position: absolute; top: 8px; right: 8px;
+  width: 13px; height: 13px; border-radius: 99px;
+  border: 2px solid #14161A;
+}
+.p-sinal.ver { background: var(--p-verde); }
+.p-sinal.amb { background: var(--p-ambar); }
+.p-sinal.cin { background: var(--p-cinza); }
+
+/* Ficha */
+.p-estado { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.p-tag {
+  font-size: 14px; font-weight: 600; padding: 7px 12px; border-radius: 99px;
+  border: 1px solid var(--p-borda); color: var(--p-suave); background: var(--p-cartao);
+}
+.p-tag.ver { color: var(--p-verde); border-color: #27543B; }
+.p-tag.amb { color: var(--p-ambar); border-color: #5A4620; }
+.p-tag.off { color: var(--p-vermelho); border-color: #5A2E2E; }
+
+.p-dif { border-color: #5A4620; }
+.p-linha-dif {
+  display: grid; grid-template-columns: 130px 1fr auto 1fr;
+  gap: 10px; align-items: baseline; padding: 9px 0;
+  border-top: 1px solid var(--p-borda); font-size: 15px;
+}
+.p-linha-dif:first-of-type { border-top: none; }
+.p-rot { color: var(--p-suave); font-size: 14px; }
+.p-antes { color: var(--p-suave); text-decoration: line-through; }
+.p-seta { color: var(--p-ambar); }
+.p-agora { color: var(--p-ambar); font-weight: 700; }
+@media (max-width: 620px) {
+  .p-linha-dif { grid-template-columns: 1fr; gap: 2px; }
+  .p-seta { display: none; }
+}
+
+.p-fotos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+@media (max-width: 620px) { .p-fotos { grid-template-columns: 1fr; } }
+.p-fotos figure { margin: 0; }
+.p-fotos img {
+  width: 100%; border-radius: 12px; border: 1px solid var(--p-borda);
+  background: #0F1114; display: block;
+}
+.p-fotos figcaption { color: var(--p-suave); font-size: 14px; text-align: center; margin-top: 6px; }
+
+.p-dados { margin: 0; display: grid; gap: 10px; }
+.p-dados > div { display: grid; grid-template-columns: 150px 1fr; gap: 12px; align-items: baseline; }
+.p-dados dt { color: var(--p-suave); font-size: 14px; }
+.p-dados dd { margin: 0; font-size: 16px; }
+@media (max-width: 620px) { .p-dados > div { grid-template-columns: 1fr; gap: 2px; } }
+
+.p-texto { font-size: 16px; line-height: 1.6; margin: 0; white-space: pre-wrap; }
+.p-fonte .p-texto { color: var(--p-suave); font-size: 15px; }
+
+.p-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+.p-nav button {
+  font: inherit; font-size: 15px; font-weight: 600; padding: 13px;
+  background: var(--p-cartao); color: var(--p-texto);
+  border: 1px solid var(--p-borda); border-radius: 11px; cursor: pointer;
+}
+.p-nav button:disabled { opacity: 0.35; cursor: default; }
