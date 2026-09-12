@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { supabase } from "./supabaseClient";
 import "./App.css";
 
@@ -11,10 +11,14 @@ const CAMPOS = [
   { chave: "numero_nome", rotulo: "Número / Nome" },
 ];
 
+// Campos que ele pode corrigir. Serve para saber se mexeu em alguma coisa.
+const EDITAVEIS = [...CAMPOS.map((c) => c.chave), "oficial"];
+
 export default function App() {
   const [camisas, setCamisas] = useState([]);
   const [idx, setIdx] = useState(0);
   const [form, setForm] = useState(null);
+  const [acrescimo, setAcrescimo] = useState("");
   const [estado, setEstado] = useState("carregando"); // carregando | ok | erro | vazio
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
@@ -47,45 +51,55 @@ export default function App() {
       fornecedor: c.fornecedor || "",
       numero_nome: c.numero_nome || "",
       oficial: c.oficial || "",
-      observacoes: c.observacoes || "",
     });
+    setAcrescimo("");
+    setErro("");
   }, [idx, camisas]);
 
   const atual = camisas[idx];
-  const totalRevisadas = camisas.filter((c) => c.revisado).length;
+  const totalConfirmadas = camisas.filter((c) => c.revisado).length;
 
-  const salvar = useCallback(async (marcarRevisado) => {
-    if (!atual || !form) return true;
+  // Ele mexeu em alguma coisa? É isso que muda o texto do botão.
+  const mexeu = useMemo(() => {
+    if (!atual || !form) return false;
+    const algumCampoMudou = EDITAVEIS.some(
+      (k) => (form[k] || "") !== (atual[k] || "")
+    );
+    return algumCampoMudou || acrescimo.trim().length > 0;
+  }, [atual, form, acrescimo]);
+
+  const confirmar = useCallback(async () => {
+    if (!atual || !form) return;
     setSalvando(true);
     setErro("");
-    const atualizacao = { ...form };
-    if (marcarRevisado) {
-      atualizacao.revisado = true;
-      atualizacao.revisado_em = new Date().toISOString();
+
+    const atualizacao = { ...form, revisado: true, revisado_em: new Date().toISOString() };
+
+    // O que ele escrever é ACRESCENTADO ao que já estava, nunca por cima.
+    const extra = acrescimo.trim();
+    if (extra) {
+      const jaTinha = (atual.observacoes || "").trim();
+      atualizacao.observacoes = jaTinha
+        ? `${jaTinha}\n\n— ${extra}`
+        : extra;
     }
+
     const { error } = await supabase.from("camisas").update(atualizacao).eq("id", atual.id);
     setSalvando(false);
     if (error) {
-      setErro("Não consegui salvar. Veja a internet e tente de novo.");
-      return false;
+      setErro("Não consegui salvar. Veja se a internet está funcionando e toque no botão de novo.");
+      return;
     }
+
     setCamisas((prev) => prev.map((c, i) => (i === idx ? { ...c, ...atualizacao } : c)));
-    return true;
-  }, [atual, form, idx]);
 
-  async function irPara(novoIdx) {
-    const ok = await salvar(false); // guarda as edições, sem marcar como confirmada
-    if (!ok) return;
-    setIdx(Math.max(0, Math.min(camisas.length - 1, novoIdx)));
+    if (idx < camisas.length - 1) setIdx(idx + 1);
     window.scrollTo(0, 0);
-  }
+  }, [atual, form, acrescimo, idx, camisas.length]);
 
-  async function confirmar() {
-    const ok = await salvar(true);
-    if (!ok) return;
-    const proxima = camisas.findIndex((c, i) => i > idx && !c.revisado);
-    if (proxima !== -1) setIdx(proxima);
-    else if (idx < camisas.length - 1) setIdx(idx + 1);
+  function voltar() {
+    if (idx === 0) return;
+    setIdx(idx - 1);
     window.scrollTo(0, 0);
   }
 
@@ -94,12 +108,20 @@ export default function App() {
   if (estado === "vazio") return <Tela><p className="aviso">Nenhuma camisa cadastrada ainda.</p></Tela>;
   if (!form || !atual) return null;
 
+  const ultima = idx === camisas.length - 1;
+  const tudoPronto = totalConfirmadas === camisas.length;
+
   return (
     <Tela>
       <header className="topo">
         <div className="contador">Camisa {idx + 1} de {camisas.length}</div>
-        <div className="progresso">{totalRevisadas} já confirmadas</div>
+        <div className="progresso">{totalConfirmadas} já conferidas</div>
       </header>
+
+      <p className="instrucao">
+        Olhe as fotos e confira os dados abaixo. Se estiver tudo certo, é só tocar no
+        botão verde. Se algo estiver errado, corrija antes de tocar nele.
+      </p>
 
       <div className="fotos">
         {atual.foto_frente && (
@@ -110,13 +132,16 @@ export default function App() {
         )}
       </div>
 
-      {atual.revisado && <div className="selo">✓ Já confirmada — pode mudar se quiser</div>}
+      {atual.revisado && <div className="selo">✓ Você já conferiu esta — pode mudar se quiser</div>}
 
       <div className="campos">
         {CAMPOS.map(({ chave, rotulo }) => (
           <label key={chave} className="campo">
             <span>{rotulo}</span>
-            <input value={form[chave]} onChange={(e) => setForm({ ...form, [chave]: e.target.value })} />
+            <input
+              value={form[chave]}
+              onChange={(e) => setForm({ ...form, [chave]: e.target.value })}
+            />
           </label>
         ))}
 
@@ -127,23 +152,44 @@ export default function App() {
             <button type="button" className={form.oficial === "Não" ? "sel" : ""} onClick={() => setForm({ ...form, oficial: "Não" })}>Não</button>
           </div>
         </div>
-
-        <label className="campo">
-          <span>Observações (algo a acrescentar?)</span>
-          <textarea rows={3} value={form.observacoes} onChange={(e) => setForm({ ...form, observacoes: e.target.value })} />
-        </label>
       </div>
+
+      <label className="campo acrescentar">
+        <span>Quer acrescentar alguma coisa sobre esta camisa?</span>
+        <small>Se souber alguma história dela, escreva aqui. Só acrescenta — não apaga nada.</small>
+        <textarea
+          rows={3}
+          placeholder="Pode deixar em branco"
+          value={acrescimo}
+          onChange={(e) => setAcrescimo(e.target.value)}
+        />
+      </label>
 
       {erro && <p className="erro">{erro}</p>}
 
       <button className="confirmar" onClick={confirmar} disabled={salvando}>
-        {salvando ? "Salvando…" : "✓ Está tudo certo"}
+        {salvando
+          ? "Salvando…"
+          : mexeu
+            ? (ultima ? "Salvar minhas correções e terminar" : "Salvar minhas correções e ir para a próxima")
+            : (ultima ? "Está tudo certo — terminar" : "Está tudo certo — ir para a próxima")}
       </button>
 
+      <p className="dica">
+        {mexeu
+          ? "Você mudou alguma coisa. O botão verde salva a sua correção."
+          : "Só toque no botão verde depois de olhar as fotos e conferir os dados."}
+      </p>
+
       <nav className="navegacao">
-        <button onClick={() => irPara(idx - 1)} disabled={idx === 0 || salvando}>← Anterior</button>
-        <button onClick={() => irPara(idx + 1)} disabled={idx === camisas.length - 1 || salvando}>Próxima →</button>
+        <button onClick={voltar} disabled={idx === 0 || salvando}>
+          ← Voltar para a anterior
+        </button>
       </nav>
+
+      {tudoPronto && (
+        <p className="fim">Você já conferiu todas as {camisas.length}. Obrigado!</p>
+      )}
     </Tela>
   );
 }

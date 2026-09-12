@@ -125,8 +125,43 @@ body {
 .confirmar:active { background: var(--verde-escuro); }
 .confirmar:disabled { opacity: 0.6; }
 
+/* Instrução do topo: o que ele tem que fazer */
+.instrucao {
+  font-size: 17px;
+  line-height: 1.45;
+  color: var(--suave);
+  background: #fff;
+  border: 1px solid var(--linha);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin: 0 0 18px;
+}
+
+.acrescentar { margin-top: 20px; }
+.acrescentar small { font-size: 15px; color: var(--suave); line-height: 1.4; }
+
+/* Frase abaixo do botão, explicando o que ele faz */
+.dica {
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--suave);
+  text-align: center;
+  margin: 12px 0 0;
+}
+
+.fim {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--verde-escuro);
+  text-align: center;
+  background: #E8F3EC;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 20px;
+}
+
 /* Navegar */
-.navegacao { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+.navegacao { display: grid; gap: 12px; margin-top: 18px; }
 .navegacao button {
   font: inherit;
   font-size: 18px;
