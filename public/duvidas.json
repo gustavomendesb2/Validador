@@ -1,0 +1,120 @@
+[
+ {
+  "id": "d-camisa_152",
+  "camisa": "camisa_152",
+  "titulo": "As duas fotos são da mesma camisa?",
+  "contexto": "Uma foto mostra o verso branco e verde com o número 5 e o patrocínio Josemar; a outra mostra uma frente verde e amarela com ondas, bem mais elaborada. Juntei as duas como frente e verso porque as vizinhas dos dois lados são de cores completamente diferentes, mas a semelhança entre elas é fraca.",
+  "pergunta": "Pegando as duas peças: é uma camisa só, ou são duas?",
+  "opcoes": [
+   "É uma camisa só",
+   "São duas camisas diferentes"
+  ],
+  "fotos": [
+   "https://yxjcinnqdntdstbrrmbd.supabase.co/storage/v1/object/public/fotos-camisas/lote3/p019.jpg",
+   "https://yxjcinnqdntdstbrrmbd.supabase.co/storage/v1/object/public/fotos-camisas/lote3/p020.jpg"
+  ]
+ },
+ {
+  "id": "d-camisa_180",
+  "camisa": "camisa_180",
+  "titulo": "As duas fotos são da mesma camisa?",
+  "contexto": "Registrei como Racing Club de Montevidéu. Uma foto mostra um verso verde escuro liso com 'Punta Ballena' e o número 28; a outra mostra uma frente listrada em verde e branco. O verso de camisa listrada costuma ser listrado também, então fiquei em dúvida — mas as vizinhas dos dois lados são de cores completamente diferentes.",
+  "pergunta": "Pegando as duas peças: é uma camisa só, ou são duas?",
+  "opcoes": [
+   "É uma camisa só",
+   "São duas camisas diferentes"
+  ],
+  "fotos": [
+   "https://yxjcinnqdntdstbrrmbd.supabase.co/storage/v1/object/public/fotos-camisas/lote3/p074.jpg",
+   "https://yxjcinnqdntdstbrrmbd.supabase.co/storage/v1/object/public/fotos-camisas/lote3/p075.jpg"
+  ]
+ },
+ {
+  "id": "d-camisa_221",
+  "camisa": "camisa_221",
+  "titulo": "A Mamoré pode estar autografada",
+  "contexto": "Camisa do Esporte Clube Mamoré, de Patos de Minas, número 3. A busca por imagem achou um anúncio de uma Mamoré autografada com esse mesmo número 3, e na foto dá para ver traços de caneta prateada por cima dos patrocinadores do peito. Na foto não dá para ter certeza se é caneta ou reflexo do tecido.",
+  "pergunta": "Olhando a peça na mão, com luz de lado: tem assinatura escrita no peito?",
+  "opcoes": [
+   "Tem assinaturas",
+   "Não tem, é reflexo",
+   "Tem, mas não dá para ler o nome"
+  ],
+  "fotos": [
+   "https://yxjcinnqdntdstbrrmbd.supabase.co/storage/v1/object/public/fotos-camisas/lote3/p158.jpg",
+   "https://yxjcinnqdntdstbrrmbd.supabase.co/storage/v1/object/public/fotos-camisas/lote3/p159.jpg"
+  ]
+ },
+ {
+  "id": "d-camisa_226",
+  "camisa": "camisa_226",
+  "titulo": "Camisa verde de losangos, sem clube identificado",
+  "contexto": "Manga longa, gola polo branca, losangos verdes e brancos, número 11 costurado em feltro. O envio veio com a legenda 'Arsenal'. O escudo é um oval bordado de uns dois centímetros e está ilegível na foto. A busca por imagem levantou um candidato: Icasa, de Juazeiro do Norte, no início dos anos 1990 — mas isso não é confirmação.",
+  "pergunta": "O que está escrito no escudo bordado no peito?",
+  "opcoes": [],
+  "fotos": [
+   "https://yxjcinnqdntdstbrrmbd.supabase.co/storage/v1/object/public/fotos-camisas/lote3/p168.jpg",
+   "https://yxjcinnqdntdstbrrmbd.supabase.co/storage/v1/object/public/fotos-camisas/lote3/p169.jpg"
+  ]
+ },
+ {
+  "id": "d-camisa_227",
+  "camisa": "camisa_227",
+  "titulo": "Camisa cinza lisa, sem clube identificado",
+  "contexto": "Camisa cinza lisa, número 13 nas costas, sem patrocinador e sem marca de fabricante. O escudo é pequeno e traz as iniciais 'C C C'. O envio veio com a legenda 'Cafuncho'. A busca por imagem não devolveu nada — só camiseta genérica de loja.",
+  "pergunta": "Que clube é esse, e o que 'Cafuncho' quer dizer aqui?",
+  "opcoes": [],
+  "fotos": [
+   "https://yxjcinnqdntdstbrrmbd.supabase.co/storage/v1/object/public/fotos-camisas/lote3/p170.jpg",
+   "https://yxjcinnqdntdstbrrmbd.supabase.co/storage/v1/object/public/fotos-camisas/lote3/p171.jpg"
+  ]
+ },
+ {
+  "id": "d-camisa_230",
+  "camisa": "camisa_230",
+  "titulo": "Camisa amarela e preta com patrocínio Netbrás",
+  "contexto": "Amarela com mangas pretas, número 8, patrocínio Netbrás nas costas, gola polo. Pelo corte e pelo tecido é do fim dos anos 1980 ou começo dos 1990. O escudo é um círculo pequeno, amarelo e preto, ilegível na foto. A busca por imagem não achou nada.",
+  "pergunta": "O que está escrito no escudo redondo do peito?",
+  "opcoes": [],
+  "fotos": [
+   "https://yxjcinnqdntdstbrrmbd.supabase.co/storage/v1/object/public/fotos-camisas/lote3/p176.jpg",
+   "https://yxjcinnqdntdstbrrmbd.supabase.co/storage/v1/object/public/fotos-camisas/lote3/p177.jpg"
+  ]
+ },
+ {
+  "id": "d-camisa_235",
+  "camisa": "camisa_235",
+  "titulo": "Seleção de cidade — qual cidade?",
+  "contexto": "Azul clara com mangas marinho, número 6, e nas costas a marca 'DOD Esportes'. O escudo do peito não é de clube: é um brasão de prefeitura, o que quer dizer que é seleção municipal. Na foto o brasão está pequeno demais para ler o nome da cidade.",
+  "pergunta": "Que cidade está escrita no brasão?",
+  "opcoes": [],
+  "fotos": [
+   "https://yxjcinnqdntdstbrrmbd.supabase.co/storage/v1/object/public/fotos-camisas/lote3/p186.jpg",
+   "https://yxjcinnqdntdstbrrmbd.supabase.co/storage/v1/object/public/fotos-camisas/lote3/p187.jpg"
+  ]
+ },
+ {
+  "id": "d-camisa_249",
+  "camisa": "camisa_249",
+  "titulo": "O '1948' bordado na nuca da Portuguesa",
+  "contexto": "Camisa da Portuguesa de 2025, branca com a faixa verde e vermelha, fornecedor Joma — o ano eu fechei pela busca por imagem. O que continua sem explicação é o '1948' bordado na nuca: a Portuguesa foi fundada em 1920, então não é ano de fundação.",
+  "pergunta": "Você sabe o que é o 1948 nessa camisa? Se não souber, tudo bem — deixo registrado como aberto.",
+  "opcoes": [],
+  "fotos": [
+   "https://yxjcinnqdntdstbrrmbd.supabase.co/storage/v1/object/public/fotos-camisas/lote3/p214.jpg",
+   "https://yxjcinnqdntdstbrrmbd.supabase.co/storage/v1/object/public/fotos-camisas/lote3/p215.jpg"
+  ]
+ },
+ {
+  "id": "d-camisa_280",
+  "camisa": "camisa_280",
+  "titulo": "A edição especial do Inter — o que ela comemora",
+  "contexto": "Camisa creme do Internacional de 2023, adidas, com estampa artística em cinza e laranja no lugar do desenho normal e sem patrocinador nenhum — o ano eu fechei pela busca por imagem. No peito tem um emblema redondo aplicado, no lugar onde iria o patrocinador, e na foto ele não é legível: é ele que diria o que a edição comemora.",
+  "pergunta": "O que está escrito no emblema redondo do peito?",
+  "opcoes": [],
+  "fotos": [
+   "https://yxjcinnqdntdstbrrmbd.supabase.co/storage/v1/object/public/fotos-camisas/lote3/p276.jpg",
+   "https://yxjcinnqdntdstbrrmbd.supabase.co/storage/v1/object/public/fotos-camisas/lote3/p277.jpg"
+  ]
+ }
+]

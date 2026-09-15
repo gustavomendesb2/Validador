@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { supabase } from "../supabaseClient";
+import Duvidas from "./Duvidas";
 import "./painel.css";
 
 // Campos que o sogro pode alterar na tela dele. São esses que comparamos
@@ -63,6 +64,14 @@ export default function Painel({ rota, navegar }) {
   if (estado === "carregando") return <Casca><p className="p-aviso">Carregando…</p></Casca>;
   if (estado === "erro") return <Casca><p className="p-aviso">Não consegui abrir o banco.</p></Casca>;
 
+  if (rota[0] === "duvidas") {
+    return (
+      <Casca>
+        <Menu atual="duvidas" navegar={navegar} />
+        <Duvidas navegar={navegar} />
+      </Casca>
+    );
+  }
   if (rota[0] === "camisa" && rota[1]) {
     const c = enriquecidas.find((x) => x.id === rota[1]);
     if (!c) return <Casca><p className="p-aviso">Camisa não encontrada.</p></Casca>;
@@ -74,6 +83,44 @@ export default function Painel({ rota, navegar }) {
 
 function Casca({ children }) {
   return <main className="painel">{children}</main>;
+}
+
+/* ---------- Menu ---------- */
+
+// Quantas duvidas existem, para o menu mostrar o numero sem esperar a pagina
+// abrir. Vem do mesmo arquivo estatico que a pagina de duvidas usa.
+function useQuantasDuvidas() {
+  const [n, setN] = useState(null);
+  useEffect(() => {
+    fetch("/duvidas.json")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((d) => setN(Array.isArray(d) ? d.length : 0))
+      .catch(() => setN(0));
+  }, []);
+  return n;
+}
+
+function Menu({ atual, navegar }) {
+  const duvidas = useQuantasDuvidas();
+  const itens = [
+    ["resumo", "Como está indo", []],
+    ["camisas", "Camisas", ["camisas"]],
+    ["duvidas", "Preciso da sua ajuda", ["duvidas"]],
+  ];
+  return (
+    <nav className="p-menu">
+      {itens.map(([id, rotulo, destino]) => (
+        <button
+          key={id}
+          className={atual === id ? "sel" : ""}
+          onClick={() => navegar(destino)}
+        >
+          {rotulo}
+          {id === "duvidas" && duvidas > 0 && <span className="p-selo">{duvidas}</span>}
+        </button>
+      ))}
+    </nav>
+  );
 }
 
 /* ---------- Visão geral ---------- */
@@ -100,6 +147,7 @@ function Resumo({ camisas, navegar }) {
 
   return (
     <Casca>
+      <Menu atual="resumo" navegar={navegar} />
       <h1 className="p-titulo">Como está indo</h1>
 
       <section className="p-cartao">
@@ -191,7 +239,7 @@ function Lista({ camisas, navegar }) {
 
   return (
     <Casca>
-      <button className="p-voltar" onClick={() => navegar([])}>← Como está indo</button>
+      <Menu atual="camisas" navegar={navegar} />
       <h1 className="p-titulo">Todas as camisas</h1>
 
       <div className="p-abas">

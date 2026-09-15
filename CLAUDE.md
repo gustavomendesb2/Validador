@@ -27,6 +27,15 @@ RLS: a chave anon pode **ler e atualizar**, não pode inserir nem apagar.
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`  ← chave **anon** (pública). 
 
+## A observação de cada camisa — obrigatória e específica
+
+Decidido em 15/09/2026. **Toda camisa tem observação preenchida**, e ela fala daquela
+peça: o ano, o time naquela temporada, o jogador do número, o patrocinador, o detalhe
+que a peça tem. Curiosidade genérica sobre o clube não serve — "o Peñarol é o clube mais
+titulado do Uruguai" vale para qualquer camisa do Peñarol e por isso não vale para
+nenhuma. O que serve: "titular de 2002, o ano do centenário, com o escudo de três
+estrelas que só foi usado nessa temporada".
+
 ## Regras inegociáveis
 - A chave **service_role** do Supabase JAMAIS entra neste app. Ela só vive no script de seed local.
 - Nunca sobrescrever o campo `dados_ia` — ele guarda o palpite original da IA para comparação.
@@ -80,7 +89,10 @@ peça uso os dois caminhos juntos:
 1. **As duas fotos**, lidas com atenção — frente e verso. Quando um detalhe
    pequeno decide (autógrafo, etiqueta, patrocínio de manga), recorto a região
    e amplio antes de concluir.
-2. **O arquivo de uniformes** (Football Kit Archive), aberto no navegador,
+2. **O arquivo de uniformes** (Football Kit Archive), aberto no navegador, em
+   **TODAS as peças** — decidido pelo Gustavo em 15/09/2026, revertendo o
+   afrouxamento de 12/09 que mandava consultar só na dúvida. Consultar sempre se
+   mostrou mais eficiente do que julgar se vale a pena consultar. Vá
    na página do ano candidato. Ele bloqueia acesso automatizado com 403 — só
    abre por navegador de verdade. É o que crava desenho, patrocinador de manga
    e qual uniforme era titular, reserva ou terceiro.
