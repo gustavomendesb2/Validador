@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from "react";
 import { supabase } from "./supabaseClient";
 import "./App.css";
 
@@ -13,6 +13,55 @@ const CAMPOS = [
 
 // Campos que ele pode corrigir. Serve para saber se mexeu em alguma coisa.
 const EDITAVEIS = [...CAMPOS.map((c) => c.chave), "oficial"];
+
+// Caixa de texto que cresce com o conteúdo.
+//
+// Por que não é um campo comum de uma linha: no celular, "Segunda camisa do
+// centenário (edição especial)" não cabe na largura da tela, e o que não cabe
+// some para o lado sem aviso. Ele não pode validar o que não está vendo.
+// Aqui a caixa ganha linha conforme precisa, e nada fica escondido.
+function Caixa({ valor, aoMudar, linhas = 1, ...resto }) {
+  const ref = useRef(null);
+
+  const ajustar = useCallback(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.height = "auto";
+    // A altura medida não conta a borda, mas a altura que se aplica conta
+    // (box-sizing: border-box). Sem somar a borda de volta, sobra sempre um
+    // fio de texto escondido — medido em 16/09/2026: 4 px, e a última linha
+    // ficava cortada ao meio.
+    const borda = el.offsetHeight - el.clientHeight;
+    el.style.height = el.scrollHeight + borda + "px";
+  }, []);
+
+  // Antes de pintar, para ele nunca ver a caixa pulando de tamanho.
+  useLayoutEffect(ajustar, [valor, ajustar]);
+
+  // Girar o celular muda a largura, e o que cabia em duas linhas passa a caber
+  // em três — ou o contrário.
+  useEffect(() => {
+    window.addEventListener("resize", ajustar);
+    return () => window.removeEventListener("resize", ajustar);
+  }, [ajustar]);
+
+  return (
+    <textarea
+      ref={ref}
+      className="cresce"
+      rows={linhas}
+      value={valor}
+      onChange={(e) => {
+        // Num campo de uma linha, Enter não tem sentido: vira espaço.
+        aoMudar(linhas === 1 ? e.target.value.replace(/[\r\n]+/g, " ") : e.target.value);
+      }}
+      onKeyDown={(e) => {
+        if (linhas === 1 && e.key === "Enter") e.preventDefault();
+      }}
+      {...resto}
+    />
+  );
+}
 
 export default function Validador() {
   const [camisas, setCamisas] = useState([]);
@@ -138,9 +187,9 @@ export default function Validador() {
         {CAMPOS.map(({ chave, rotulo }) => (
           <label key={chave} className="campo">
             <span>{rotulo}</span>
-            <input
-              value={form[chave]}
-              onChange={(e) => setForm({ ...form, [chave]: e.target.value })}
+            <Caixa
+              valor={form[chave]}
+              aoMudar={(v) => setForm({ ...form, [chave]: v })}
             />
           </label>
         ))}
@@ -157,11 +206,11 @@ export default function Validador() {
       <label className="campo acrescentar">
         <span>Quer acrescentar alguma coisa sobre esta camisa?</span>
         <small>Se souber alguma história dela, escreva aqui. Só acrescenta — não apaga nada.</small>
-        <textarea
-          rows={3}
+        <Caixa
+          linhas={3}
           placeholder="Pode deixar em branco"
-          value={acrescimo}
-          onChange={(e) => setAcrescimo(e.target.value)}
+          valor={acrescimo}
+          aoMudar={setAcrescimo}
         />
       </label>
 

@@ -87,6 +87,15 @@ body {
 }
 .campo textarea { resize: vertical; }
 
+/* Caixa que cresce com o conteúdo: sem barra de rolagem interna e sem alça de
+   arrastar, porque a altura já é sempre a do texto inteiro. O que ele precisa
+   ler está todo na tela. */
+.campo textarea.cresce {
+  resize: none;
+  overflow: hidden;
+  line-height: 1.35;
+}
+
 /* Sim / Não bem grandes */
 .sim-nao { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .sim-nao button {
