@@ -313,6 +313,12 @@ function Ficha({ camisa: c, navegar, lista, filtrada }) {
   return (
     <Casca>
       <button className="p-voltar" onClick={() => navegar(["camisas"])}>← Todas as camisas</button>
+      <nav className="p-nav p-nav-topo">
+        <button disabled={!anterior} onClick={() => anterior && navegar(["camisa", anterior.id])}>← Anterior</button>
+        <button disabled={!seguinte} onClick={() => seguinte && navegar(["camisa", seguinte.id])}>Seguinte →</button>
+      </nav>
+      {filtrada && <p className="p-legenda p-posicao">{i + 1} de {lista.length} no filtro que você escolheu</p>}
+
 
       <h1 className="p-titulo">{c.time || "—"}</h1>
       <p className="p-sub">
@@ -384,11 +390,6 @@ function Ficha({ camisa: c, navegar, lista, filtrada }) {
         </section>
       )}
 
-      <nav className="p-nav">
-        <button disabled={!anterior} onClick={() => anterior && navegar(["camisa", anterior.id])}>← Anterior</button>
-        <button disabled={!seguinte} onClick={() => seguinte && navegar(["camisa", seguinte.id])}>Seguinte →</button>
-      </nav>
-      {filtrada && <p className="p-legenda">{i + 1} de {lista.length} no filtro que você escolheu</p>}
     </Casca>
   );
 }

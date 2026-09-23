@@ -178,6 +178,8 @@ body:has(.painel),
   border: 1px solid var(--p-borda); border-radius: 11px; cursor: pointer;
 }
 .p-nav button:disabled { opacity: 0.35; cursor: default; }
+.p-nav-topo { margin: 0 0 8px; }
+.p-posicao { margin: 0 0 14px; }
 
 /* ---------- Menu do painel ---------- */
 
