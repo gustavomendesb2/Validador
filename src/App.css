@@ -150,7 +150,7 @@ body {
 
 /* A curiosidade do catálogo, para ele ler */
 .curiosidade {
-  margin-top: 20px;
+  margin: 4px 0 22px;
   background: #FFF8E6;
   border: 1px solid #E8D9A8;
   border-radius: 12px;

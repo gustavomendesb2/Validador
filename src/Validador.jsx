@@ -192,6 +192,13 @@ export default function Validador() {
 
       {atual.revisado && <div className="selo">✓ Você já conferiu esta — pode mudar se quiser</div>}
 
+      {curiosidade && (
+        <section className="curiosidade">
+          <h2>Curiosidade sobre esta camisa</h2>
+          <p>{curiosidade}</p>
+        </section>
+      )}
+
       <div className="campos">
         {CAMPOS.map(({ chave, rotulo }) => (
           <label key={chave} className="campo">
@@ -211,13 +218,6 @@ export default function Validador() {
           </div>
         </div>
       </div>
-
-      {curiosidade && (
-        <section className="curiosidade">
-          <h2>Curiosidade sobre esta camisa</h2>
-          <p>{curiosidade}</p>
-        </section>
-      )}
 
       {notas.length > 0 && (
         <div className="ja-escreveu">
