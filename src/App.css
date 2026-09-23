@@ -147,6 +147,18 @@ body {
 }
 
 .acrescentar { margin-top: 20px; }
+
+/* O que ele já escreveu nesta camisa — para ele ver que ficou salvo */
+.ja-escreveu {
+  margin-top: 20px;
+  background: #E8F3EC;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 18px;
+  line-height: 1.45;
+}
+.ja-escreveu span { display: block; font-weight: 700; color: var(--verde-escuro); font-size: 16px; }
+.ja-escreveu p { margin: 8px 0 0; white-space: pre-wrap; }
 .acrescentar small { font-size: 15px; color: var(--suave); line-height: 1.4; }
 
 /* Frase abaixo do botão, explicando o que ele faz */

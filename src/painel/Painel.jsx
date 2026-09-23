@@ -24,6 +24,33 @@ function diferencas(camisa, base) {
   );
 }
 
+// O que ele escreveu na caixa "Quer acrescentar alguma coisa?". A tela dele
+// junta cada acréscimo ao fim da observação, depois de uma linha em branco e
+// um travessão — então é o que sobra além da observação original.
+function acrescimos(camisa, base) {
+  if (!base) return [];
+  const agora = norm(camisa.observacoes);
+  const antes = norm(base.observacoes);
+  const resto = agora.startsWith(antes) ? agora.slice(antes.length) : agora;
+  return resto.split(/\n\n— /).map((t) => t.replace(/^\s*—\s*/, "").trim()).filter(Boolean);
+}
+
+// Ele mexeu em alguma coisa: corrigiu campo ou escreveu observação.
+const mexeu = (c) => c._dif.length > 0 || c._notas.length > 0;
+
+function filtrar(camisas, filtro, busca) {
+  return camisas.filter((c) => {
+    if (filtro === "pendentes" && c.revisado) return false;
+    if (filtro === "conferidas" && !c.revisado) return false;
+    if (filtro === "corrigidas" && !mexeu(c)) return false;
+    const t = busca.trim().toLowerCase();
+    if (!t) return true;
+    return [c.time, c.pais, c.ano, c.fornecedor, c.modelo].some((v) =>
+      norm(v).toLowerCase().includes(t)
+    );
+  });
+}
+
 function quando(iso) {
   if (!iso) return null;
   const d = new Date(iso);
@@ -42,6 +69,11 @@ export default function Painel({ rota, navegar }) {
   const [camisas, setCamisas] = useState([]);
   const [base, setBase] = useState(null);
   const [estado, setEstado] = useState("carregando");
+  // O filtro fica aqui, e não na lista, para a ficha andar dentro dele:
+  // quem abriu uma camisa pela aba "Corrigidas" e toca em "Seguinte" quer a
+  // próxima corrigida, não a próxima da fila geral.
+  const [filtro, setFiltro] = useState("todas");
+  const [busca, setBusca] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -57,7 +89,7 @@ export default function Painel({ rota, navegar }) {
   }, []);
 
   const enriquecidas = useMemo(
-    () => camisas.map((c) => ({ ...c, _dif: diferencas(c, base?.[c.id]), _base: base?.[c.id] || null })),
+    () => camisas.map((c) => ({ ...c, _dif: diferencas(c, base?.[c.id]), _notas: acrescimos(c, base?.[c.id]), _base: base?.[c.id] || null })),
     [camisas, base]
   );
 
@@ -75,9 +107,17 @@ export default function Painel({ rota, navegar }) {
   if (rota[0] === "camisa" && rota[1]) {
     const c = enriquecidas.find((x) => x.id === rota[1]);
     if (!c) return <Casca><p className="p-aviso">Camisa não encontrada.</p></Casca>;
-    return <Ficha camisa={c} navegar={navegar} lista={enriquecidas} />;
+    const vistas = filtrar(enriquecidas, filtro, busca);
+    // Se a camisa saiu do filtro (ou veio por link direto), anda na fila geral.
+    const lista = vistas.some((x) => x.id === c.id) ? vistas : enriquecidas;
+    return <Ficha camisa={c} navegar={navegar} lista={lista} filtrada={lista !== enriquecidas && filtro !== "todas"} />;
   }
-  if (rota[0] === "camisas") return <Lista camisas={enriquecidas} navegar={navegar} />;
+  if (rota[0] === "camisas") {
+    return (
+      <Lista camisas={enriquecidas} navegar={navegar}
+        filtro={filtro} setFiltro={setFiltro} busca={busca} setBusca={setBusca} />
+    );
+  }
   return <Resumo camisas={enriquecidas} navegar={navegar} />;
 }
 
@@ -128,7 +168,7 @@ function Menu({ atual, navegar }) {
 function Resumo({ camisas, navegar }) {
   const total = camisas.length;
   const feitas = camisas.filter((c) => c.revisado);
-  const corrigidas = feitas.filter((c) => c._dif.length > 0);
+  const corrigidas = feitas.filter(mexeu);
   const pct = total ? Math.round((feitas.length / total) * 100) : 0;
 
   const ultima = feitas
@@ -191,14 +231,14 @@ function Resumo({ camisas, navegar }) {
             ? "Nada conferido ainda."
             : corrigidas.length === 0
               ? "Ele confirmou tudo sem mudar nada até agora."
-              : "Camisas em que ele mexeu em algum campo. Aparecem em âmbar na lista."}
+              : "Camisas em que ele corrigiu algum campo ou escreveu observação. Aparecem em âmbar na lista."}
         </p>
         {corrigidas.length > 0 && (
           <ul className="p-mini">
             {corrigidas.slice(0, 5).map((c) => (
               <li key={c.id}>
                 <button onClick={() => navegar(["camisa", c.id])}>
-                  {c.time} · {c._dif.map((d) => d.rotulo).join(", ")}
+                  {c.time} · {[...c._dif.map((d) => d.rotulo), ...(c._notas.length ? ["Observação"] : [])].join(", ")}
                 </button>
               </li>
             ))}
@@ -215,26 +255,14 @@ function Resumo({ camisas, navegar }) {
 
 /* ---------- Lista ---------- */
 
-function Lista({ camisas, navegar }) {
-  const [filtro, setFiltro] = useState("todas");
-  const [busca, setBusca] = useState("");
-
-  const vistas = camisas.filter((c) => {
-    if (filtro === "pendentes" && c.revisado) return false;
-    if (filtro === "conferidas" && !c.revisado) return false;
-    if (filtro === "corrigidas" && c._dif.length === 0) return false;
-    const t = busca.trim().toLowerCase();
-    if (!t) return true;
-    return [c.time, c.pais, c.ano, c.fornecedor, c.modelo].some((v) =>
-      norm(v).toLowerCase().includes(t)
-    );
-  });
+function Lista({ camisas, navegar, filtro, setFiltro, busca, setBusca }) {
+  const vistas = filtrar(camisas, filtro, busca);
 
   const abas = [
     ["todas", "Todas", camisas.length],
     ["pendentes", "Pendentes", camisas.filter((c) => !c.revisado).length],
     ["conferidas", "Conferidas", camisas.filter((c) => c.revisado).length],
-    ["corrigidas", "Corrigidas", camisas.filter((c) => c._dif.length > 0).length],
+    ["corrigidas", "Corrigidas", camisas.filter(mexeu).length],
   ];
 
   return (
@@ -264,7 +292,7 @@ function Lista({ camisas, navegar }) {
           <button key={c.id} className="p-card" onClick={() => navegar(["camisa", c.id])}>
             <div className="p-foto">
               {c.foto_frente ? <img src={c.foto_frente} alt="" loading="lazy" /> : <div className="p-sem" />}
-              <span className={"p-sinal " + (c._dif.length > 0 ? "amb" : c.revisado ? "ver" : "cin")} />
+              <span className={"p-sinal " + (mexeu(c) ? "amb" : c.revisado ? "ver" : "cin")} />
             </div>
             <strong>{c.time || "—"}</strong>
             <small>{[c.ano, c.fornecedor].filter(Boolean).join(" · ")}</small>
@@ -277,7 +305,7 @@ function Lista({ camisas, navegar }) {
 
 /* ---------- Ficha ---------- */
 
-function Ficha({ camisa: c, navegar, lista }) {
+function Ficha({ camisa: c, navegar, lista, filtrada }) {
   const i = lista.findIndex((x) => x.id === c.id);
   const anterior = i > 0 ? lista[i - 1] : null;
   const seguinte = i < lista.length - 1 ? lista[i + 1] : null;
@@ -298,6 +326,7 @@ function Ficha({ camisa: c, navegar, lista }) {
           <span className="p-tag cin">Ainda não conferida</span>
         )}
         {c._dif.length > 0 && <span className="p-tag amb">Ele corrigiu {c._dif.length} campo{c._dif.length > 1 ? "s" : ""}</span>}
+        {c._notas.length > 0 && <span className="p-tag amb">Ele escreveu observação</span>}
         {c.oficial === "Não" && <span className="p-tag off">Não oficial</span>}
       </div>
 
@@ -312,6 +341,13 @@ function Ficha({ camisa: c, navegar, lista }) {
               <span className="p-agora">{d.agora || "(vazio)"}</span>
             </div>
           ))}
+        </section>
+      )}
+
+      {c._notas.length > 0 && (
+        <section className="p-cartao p-dif">
+          <h2>O que ele escreveu</h2>
+          {c._notas.map((t, k) => <p key={k} className="p-texto">{t}</p>)}
         </section>
       )}
 
@@ -352,6 +388,7 @@ function Ficha({ camisa: c, navegar, lista }) {
         <button disabled={!anterior} onClick={() => anterior && navegar(["camisa", anterior.id])}>← Anterior</button>
         <button disabled={!seguinte} onClick={() => seguinte && navegar(["camisa", seguinte.id])}>Seguinte →</button>
       </nav>
+      {filtrada && <p className="p-legenda">{i + 1} de {lista.length} no filtro que você escolheu</p>}
     </Casca>
   );
 }

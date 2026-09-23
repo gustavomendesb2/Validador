@@ -157,6 +157,13 @@ export default function Validador() {
   if (estado === "vazio") return <Tela><p className="aviso">Nenhuma camisa cadastrada ainda.</p></Tela>;
   if (!form || !atual) return null;
 
+  // O que ele mesmo já escreveu nesta camisa. Cada acréscimo é gravado no fim
+  // da observação depois de uma linha em branco e um travessão; o primeiro
+  // pedaço é a observação do catálogo, que não é dele. Sem mostrar isto, ele
+  // voltava na camisa, via a caixa vazia e achava que não tinha salvado —
+  // e escrevia de novo (camisa_027 ficou com três versões, 22/09/2026).
+  const notas = (atual.observacoes || "").split(/\n\n— /).slice(1).map((t) => t.trim()).filter(Boolean);
+
   const ultima = idx === camisas.length - 1;
   const tudoPronto = totalConfirmadas === camisas.length;
 
@@ -203,8 +210,15 @@ export default function Validador() {
         </div>
       </div>
 
+      {notas.length > 0 && (
+        <div className="ja-escreveu">
+          <span>✓ O que você já escreveu sobre esta camisa (está salvo):</span>
+          {notas.map((t, k) => <p key={k}>{t}</p>)}
+        </div>
+      )}
+
       <label className="campo acrescentar">
-        <span>Quer acrescentar alguma coisa sobre esta camisa?</span>
+        <span>{notas.length > 0 ? "Quer acrescentar mais alguma coisa?" : "Quer acrescentar alguma coisa sobre esta camisa?"}</span>
         <small>Se souber alguma história dela, escreva aqui. Só acrescenta — não apaga nada.</small>
         <Caixa
           linhas={3}
