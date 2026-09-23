@@ -148,6 +148,17 @@ body {
 
 .acrescentar { margin-top: 20px; }
 
+/* A curiosidade do catálogo, para ele ler */
+.curiosidade {
+  margin-top: 20px;
+  background: #FFF8E6;
+  border: 1px solid #E8D9A8;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.curiosidade h2 { margin: 0 0 8px; font-size: 17px; font-weight: 700; color: #6B5310; }
+.curiosidade p { margin: 0; font-size: 19px; line-height: 1.5; white-space: pre-wrap; color: #222; }
+
 /* O que ele já escreveu nesta camisa — para ele ver que ficou salvo */
 .ja-escreveu {
   margin-top: 20px;

@@ -162,7 +162,9 @@ export default function Validador() {
   // pedaço é a observação do catálogo, que não é dele. Sem mostrar isto, ele
   // voltava na camisa, via a caixa vazia e achava que não tinha salvado —
   // e escrevia de novo (camisa_027 ficou com três versões, 22/09/2026).
-  const notas = (atual.observacoes || "").split(/\n\n— /).slice(1).map((t) => t.trim()).filter(Boolean);
+  const pedacos = (atual.observacoes || "").split(/\n\n— /);
+  const curiosidade = pedacos[0].trim();
+  const notas = pedacos.slice(1).map((t) => t.trim()).filter(Boolean);
 
   const ultima = idx === camisas.length - 1;
   const tudoPronto = totalConfirmadas === camisas.length;
@@ -209,6 +211,13 @@ export default function Validador() {
           </div>
         </div>
       </div>
+
+      {curiosidade && (
+        <section className="curiosidade">
+          <h2>Curiosidade sobre esta camisa</h2>
+          <p>{curiosidade}</p>
+        </section>
+      )}
 
       {notas.length > 0 && (
         <div className="ja-escreveu">
