@@ -163,7 +163,10 @@ export default function Validador() {
   // voltava na camisa, via a caixa vazia e achava que não tinha salvado —
   // e escrevia de novo (camisa_027 ficou com três versões, 22/09/2026).
   const pedacos = (atual.observacoes || "").split(/\n\n— /);
-  const curiosidade = pedacos[0].trim();
+  // A observação do catálogo às vezes traz, no fim do primeiro pedaço, uma
+  // nota interna de catalogação ("Nota: …", "Pareamento: …") — anotação para
+  // conferência nossa, não curiosidade para ele ler (24/09/2026).
+  const curiosidade = pedacos[0].split(/\n\n(?:Nota|Pareamento):/)[0].trim();
   const notas = pedacos.slice(1).map((t) => t.trim()).filter(Boolean);
 
   const ultima = idx === camisas.length - 1;
