@@ -159,6 +159,30 @@ body {
 .curiosidade h2 { margin: 0 0 8px; font-size: 17px; font-weight: 700; color: #6B5310; }
 .curiosidade p { margin: 0; font-size: 19px; line-height: 1.5; white-space: pre-wrap; color: #222; }
 
+/* Resposta a uma anotação dele, com as imagens que provam */
+.prova {
+  margin: 0 0 22px;
+  background: #EEF3FA;
+  border: 1px solid #C9D6EA;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.prova h2 { margin: 0 0 8px; font-size: 17px; font-weight: 700; color: #1F3F6B; }
+.prova p { margin: 0 0 14px; font-size: 19px; line-height: 1.5; white-space: pre-wrap; color: #222; }
+.prova figure { margin: 0 0 16px; }
+.prova img {
+  width: 100%;
+  height: auto;
+  max-height: 60vh;
+  object-fit: contain;
+  display: block;
+  background: #fff;
+  border: 1px solid var(--linha);
+  border-radius: 10px;
+}
+.prova figcaption { text-align: center; font-size: 17px; color: #333; margin-top: 6px; font-weight: 600; }
+.prova small { display: block; font-size: 14px; color: var(--suave); }
+
 /* O que ele já escreveu nesta camisa — para ele ver que ficou salvo */
 .ja-escreveu {
   margin-top: 20px;

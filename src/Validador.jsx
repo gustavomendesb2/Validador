@@ -71,6 +71,17 @@ export default function Validador() {
   const [estado, setEstado] = useState("carregando"); // carregando | ok | erro | vazio
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
+  // Respostas às anotações dele, com a prova (texto e imagens). Quando a
+  // anotação não procede, a camisa volta para a fila dele com a explicação,
+  // em vez de a correção ser ignorada em silêncio (23/09/2026).
+  const [provas, setProvas] = useState({});
+
+  useEffect(() => {
+    fetch("/provas.json")
+      .then((r) => (r.ok ? r.json() : {}))
+      .then(setProvas)
+      .catch(() => {});
+  }, []);
 
   // Carrega todas as camisas e começa na primeira ainda não confirmada
   useEffect(() => {
@@ -140,11 +151,18 @@ export default function Validador() {
       return;
     }
 
-    setCamisas((prev) => prev.map((c, i) => (i === idx ? { ...c, ...atualizacao } : c)));
+    const novas = camisas.map((c, i) => (i === idx ? { ...c, ...atualizacao } : c));
+    setCamisas(novas);
 
-    if (idx < camisas.length - 1) setIdx(idx + 1);
+    // Segue para a próxima que ele ainda não conferiu, e não simplesmente para
+    // a seguinte da fila: quando uma camisa antiga volta para ele conferir de
+    // novo, as já conferidas depois dela não podem ficar no caminho.
+    const depois = novas.findIndex((c, i) => i > idx && !c.revisado);
+    const antes = novas.findIndex((c) => !c.revisado);
+    const proxima = depois !== -1 ? depois : antes !== -1 ? antes : idx + 1;
+    if (proxima < novas.length) setIdx(proxima);
     window.scrollTo(0, 0);
-  }, [atual, form, acrescimo, idx, camisas.length]);
+  }, [atual, form, acrescimo, idx, camisas]);
 
   function voltar() {
     if (idx === 0) return;
@@ -165,10 +183,11 @@ export default function Validador() {
   const pedacos = (atual.observacoes || "").split(/\n\n— /);
   // A observação do catálogo às vezes traz, no fim do primeiro pedaço, uma
   // nota interna de catalogação ("Nota: …", "Pareamento: …") — anotação para
-  // conferência nossa, não curiosidade para ele ler (24/09/2026).
+  // conferência nossa, não curiosidade para ele ler (23/09/2026).
   const curiosidade = pedacos[0].split(/\n\n(?:Nota|Pareamento):/)[0].trim();
   const notas = pedacos.slice(1).map((t) => t.trim()).filter(Boolean);
 
+  const prova = provas[atual.id];
   const ultima = idx === camisas.length - 1;
   const tudoPronto = totalConfirmadas === camisas.length;
 
@@ -199,6 +218,20 @@ export default function Validador() {
         <section className="curiosidade">
           <h2>Curiosidade sobre esta camisa</h2>
           <p>{curiosidade}</p>
+        </section>
+      )}
+
+      {prova && (
+        <section className="prova">
+          <h2>{prova.titulo}</h2>
+          <p>{prova.texto}</p>
+          {(prova.imagens || []).map((im, k) => (
+            <figure key={k}>
+              <img src={im.src} alt={im.legenda} loading="lazy" />
+              <figcaption>{im.legenda}</figcaption>
+            </figure>
+          ))}
+          {prova.fonte && <small>{prova.fonte}</small>}
         </section>
       )}
 
