@@ -1,7 +1,7 @@
 {
   "camisa_400": {
     "titulo": "Sua anotação foi conferida",
-    "texto": "Você escreveu que a Lupo fez as camisas do Galo em 2016, e que em 2013 era a Puma. Fomos conferir no Football Kit Archive, um arquivo que reúne as camisas de cada clube, ano por ano.\n\nLá, todas as camisas do Atlético de 2013 são da Lupo — a titular, a reserva, a de goleiro e até a do Mundial de Clubes. A Puma entrou em 2014 e ficou até 2015. Em 2016 a marca era a Dryworld, e o patrocinador já era a Caixa.\n\nEsta regata tem a Lupo escrita nas costas, e a Lupo só vestiu o Galo em 2013. Por isso deixamos 2013. Veja as três camisas abaixo. Se você tiver alguma outra lembrança, é só escrever de novo.",
+    "texto": "O senhor escreveu que a Lupo fez as camisas do Galo em 2016, e que em 2013 era a Puma. Fomos conferir no Football Kit Archive, um arquivo que reúne as camisas de cada clube, ano por ano.\n\nLá, todas as camisas do Atlético de 2013 são da Lupo — a titular, a reserva, a de goleiro e até a do Mundial de Clubes. A Puma entrou em 2014 e ficou até 2015. Em 2016 a marca era a Dryworld, e o patrocinador já era a Caixa.\n\nEsta regata tem a Lupo escrita nas costas, e a Lupo só vestiu o Galo em 2013. Por isso deixamos 2013. Veja as três camisas abaixo. Se o senhor tiver alguma outra lembrança, é só escrever de novo.",
     "imagens": [
       { "src": "https://yxjcinnqdntdstbrrmbd.supabase.co/storage/v1/object/public/fotos-camisas/provas/galo-2013-titular-lupo.jpg", "legenda": "2013 — Lupo, com o Banco BMG no peito" },
       { "src": "https://yxjcinnqdntdstbrrmbd.supabase.co/storage/v1/object/public/fotos-camisas/provas/galo-2014-titular-puma.jpg", "legenda": "2014 — já é Puma" },
@@ -11,7 +11,7 @@
   },
   "camisa_308": {
     "titulo": "Sua anotação foi conferida",
-    "texto": "Você escreveu que esta não é camisa de goleiro. Fomos conferir no Football Kit Archive, um arquivo que reúne as camisas de cada clube, ano por ano.\n\nLá, esta camisa amarela com a Cristal e a Rifertil no peito aparece como a primeira camisa de goleiro do CRAC em 2025. Na foto de lançamento, quem veste é o goleiro — dá para ver as luvas. As camisas dos jogadores de linha naquele ano eram azul-celeste e branca.\n\nPor isso deixamos como camisa de goleiro. Veja as fotos abaixo. Se você souber de outra coisa sobre ela, é só escrever de novo.",
+    "texto": "O senhor escreveu que esta não é camisa de goleiro. Fomos conferir no Football Kit Archive, um arquivo que reúne as camisas de cada clube, ano por ano.\n\nLá, esta camisa amarela com a Cristal e a Rifertil no peito aparece como a primeira camisa de goleiro do CRAC em 2025. Na foto de lançamento, quem veste é o goleiro — dá para ver as luvas. As camisas dos jogadores de linha naquele ano eram azul-celeste e branca.\n\nPor isso deixamos como camisa de goleiro. Veja as fotos abaixo. Se o senhor souber de outra coisa sobre ela, é só escrever de novo.",
     "imagens": [
       { "src": "https://yxjcinnqdntdstbrrmbd.supabase.co/storage/v1/object/public/fotos-camisas/provas/crac-2025-goleiro.jpg", "legenda": "Goleiro do CRAC em 2025, de luvas, com esta camisa" },
       { "src": "https://yxjcinnqdntdstbrrmbd.supabase.co/storage/v1/object/public/fotos-camisas/provas/crac-2025-titular.jpg", "legenda": "Titular de 2025, dos jogadores de linha" },
