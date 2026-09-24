@@ -227,7 +227,7 @@ export default function Validador() {
           <p>{prova.texto}</p>
           {(prova.imagens || []).map((im, k) => (
             <figure key={k}>
-              <img src={im.src} alt={im.legenda} loading="lazy" />
+              <img src={im.src} alt={im.legenda} />
               <figcaption>{im.legenda}</figcaption>
             </figure>
           ))}
