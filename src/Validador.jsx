@@ -14,6 +14,31 @@ const CAMPOS = [
 // Campos que ele pode corrigir. Serve para saber se mexeu em alguma coisa.
 const EDITAVEIS = [...CAMPOS.map((c) => c.chave), "oficial"];
 
+// Sem acento e sem maiúscula, para "sao paulo" achar "São Paulo".
+const sem = (v) =>
+  (v == null ? "" : String(v)).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+
+// Apelidos que ele vai digitar e que não estão no nome cadastrado: as camisas
+// do Galo estão como "Atlético-MG" ou "Clube Atlético Mineiro" (24/09/2026).
+const APELIDOS = [
+  [/atletico[- ]?mg|atletico mineiro/, "galo"],
+  [/flamengo/, "mengao mengo"],
+  [/corinthians/, "timao"],
+  [/palmeiras/, "verdao porco"],
+  [/^santos|santos fc|santos futebol/, "peixe"],
+  [/cruzeiro/, "raposa"],
+  [/america (mineiro|futebol clube \(mg\))|america-mg/, "coelho"],
+];
+const apelidos = (time) => {
+  const t = sem(time);
+  return APELIDOS.filter(([re]) => re.test(t)).map(([, a]) => a).join(" ");
+};
+
+// A miniatura de cada foto fica no mesmo caminho, dentro de "miniaturas/"
+// (gerada no envio por scripts/miniaturas.py). A galeria usa só miniaturas:
+// as 417 fotos originais pesariam ~50 MB no celular dele (24/09/2026).
+const miniatura = (url) => (url || "").replace("/fotos-camisas/", "/fotos-camisas/miniaturas/");
+
 // Caixa de texto que cresce com o conteúdo.
 //
 // Por que não é um campo comum de uma linha: no celular, "Segunda camisa do
@@ -66,11 +91,17 @@ function Caixa({ valor, aoMudar, linhas = 1, ...resto }) {
 export default function Validador() {
   const [camisas, setCamisas] = useState([]);
   const [idx, setIdx] = useState(0);
+  // fila: conferindo as que faltam, na ordem · lista: galeria de todas ·
+  // camisa: uma camisa aberta pela galeria · fim: não há nada pendente
+  const [modo, setModo] = useState("fila");
   const [form, setForm] = useState(null);
   const [acrescimo, setAcrescimo] = useState("");
   const [estado, setEstado] = useState("carregando"); // carregando | ok | erro | vazio
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
+  const [busca, setBusca] = useState("");
+  const [ordem, setOrdem] = useState("nome"); // nome | chegada
+  const rolagemLista = useRef(0);
   // Respostas às anotações dele, com a prova (texto e imagens). Quando a
   // anotação não procede, a camisa volta para a fila dele com a explicação,
   // em vez de a correção ser ignorada em silêncio (23/09/2026).
@@ -83,7 +114,9 @@ export default function Validador() {
       .catch(() => {});
   }, []);
 
-  // Carrega todas as camisas e começa na primeira ainda não confirmada
+  // Carrega todas as camisas. Se houver alguma que ele ainda não conferiu,
+  // começa nela; se não houver, mostra que terminou — e não recomeça da
+  // primeira (em 24/09/2026 isso o fez reconferir 300 camisas sem precisar).
   useEffect(() => {
     (async () => {
       const { data, error } = await supabase
@@ -94,7 +127,8 @@ export default function Validador() {
       if (!data || data.length === 0) { setEstado("vazio"); return; }
       setCamisas(data);
       const pendente = data.findIndex((c) => !c.revisado);
-      setIdx(pendente === -1 ? 0 : pendente);
+      if (pendente === -1) setModo("fim");
+      else setIdx(pendente);
       setEstado("ok");
     })();
   }, []);
@@ -116,8 +150,16 @@ export default function Validador() {
     setErro("");
   }, [idx, camisas]);
 
+  // Ao voltar para a lista, ele volta para o mesmo ponto em que estava; em
+  // qualquer outra troca de tela, começa do topo.
+  useLayoutEffect(() => {
+    if (modo === "lista") window.scrollTo(0, rolagemLista.current);
+    else window.scrollTo(0, 0);
+  }, [modo, idx]);
+
   const atual = camisas[idx];
   const totalConfirmadas = camisas.filter((c) => c.revisado).length;
+  const pendentes = camisas.length - totalConfirmadas;
 
   // Ele mexeu em alguma coisa? É isso que muda o texto do botão.
   const mexeu = useMemo(() => {
@@ -127,6 +169,24 @@ export default function Validador() {
     );
     return algumCampoMudou || acrescimo.trim().length > 0;
   }, [atual, form, acrescimo]);
+
+  const continuarConferindo = useCallback(() => {
+    const p = camisas.findIndex((c) => !c.revisado);
+    if (p === -1) { setModo("fim"); return; }
+    setIdx(p);
+    setModo("fila");
+  }, [camisas]);
+
+  const abrirLista = useCallback(() => {
+    rolagemLista.current = 0;
+    setModo("lista");
+  }, []);
+
+  const abrirDaLista = useCallback((i) => {
+    rolagemLista.current = window.scrollY;
+    setIdx(i);
+    setModo("camisa");
+  }, []);
 
   const confirmar = useCallback(async () => {
     if (!atual || !form) return;
@@ -154,25 +214,62 @@ export default function Validador() {
     const novas = camisas.map((c, i) => (i === idx ? { ...c, ...atualizacao } : c));
     setCamisas(novas);
 
-    // Segue para a próxima que ele ainda não conferiu, e não simplesmente para
-    // a seguinte da fila: quando uma camisa antiga volta para ele conferir de
-    // novo, as já conferidas depois dela não podem ficar no caminho.
+    // Aberta pela lista: volta para a lista, no mesmo ponto em que ele estava.
+    if (modo === "camisa") { setModo("lista"); return; }
+
+    // Na fila: segue para a próxima que ele ainda não conferiu, e não para a
+    // seguinte da ordem — as já conferidas não podem ficar no caminho.
     const depois = novas.findIndex((c, i) => i > idx && !c.revisado);
     const antes = novas.findIndex((c) => !c.revisado);
-    const proxima = depois !== -1 ? depois : antes !== -1 ? antes : idx + 1;
-    if (proxima < novas.length) setIdx(proxima);
-    window.scrollTo(0, 0);
-  }, [atual, form, acrescimo, idx, camisas]);
+    const proxima = depois !== -1 ? depois : antes;
+    if (proxima === -1) setModo("fim");
+    else setIdx(proxima);
+  }, [atual, form, acrescimo, idx, camisas, modo]);
 
   function voltar() {
     if (idx === 0) return;
     setIdx(idx - 1);
-    window.scrollTo(0, 0);
   }
 
   if (estado === "carregando") return <Tela><p className="aviso">Carregando…</p></Tela>;
   if (estado === "erro") return <Tela><p className="aviso">Não consegui abrir. Tente recarregar a página.</p></Tela>;
   if (estado === "vazio") return <Tela><p className="aviso">Nenhuma camisa cadastrada ainda.</p></Tela>;
+
+  // Só aparece quando há camisa esperando por ele.
+  const faixaContinuar = pendentes > 0 && (
+    <button className="faixa-continuar" onClick={continuarConferindo}>
+      <span>{pendentes === 1 ? "Falta 1 camisa para conferir" : `Faltam ${pendentes} camisas para conferir`}</span>
+      <strong>Continuar conferindo →</strong>
+    </button>
+  );
+
+  if (modo === "fim") {
+    return (
+      <Tela>
+        <div className="fim-tela">
+          <p className="fim-titulo">✓ Você já conferiu todas as {camisas.length} camisas.</p>
+          <p className="fim-obrigado">Obrigado!</p>
+          <p className="fim-texto">Quando chegar camisa nova, ela aparece aqui para você conferir.</p>
+          <button className="botao-grande" onClick={abrirLista}>Ver todas as camisas</button>
+        </div>
+      </Tela>
+    );
+  }
+
+  if (modo === "lista") {
+    return (
+      <Lista
+        camisas={camisas}
+        busca={busca}
+        setBusca={setBusca}
+        ordem={ordem}
+        setOrdem={setOrdem}
+        aoAbrir={abrirDaLista}
+        faixa={faixaContinuar}
+      />
+    );
+  }
+
   if (!form || !atual) return null;
 
   // O que ele mesmo já escreveu nesta camisa. Cada acréscimo é gravado no fim
@@ -188,20 +285,39 @@ export default function Validador() {
   const notas = pedacos.slice(1).map((t) => t.trim()).filter(Boolean);
 
   const prova = provas[atual.id];
-  const ultima = idx === camisas.length - 1;
-  const tudoPronto = totalConfirmadas === camisas.length;
+  const naFila = modo === "fila";
+  const outrasPendentes = camisas.some((c, i) => i !== idx && !c.revisado);
+
+  const textoBotao = salvando
+    ? "Salvando…"
+    : !naFila
+      ? (mexeu ? "Salvar minhas correções e voltar para a lista" : "Está tudo certo — voltar para a lista")
+      : mexeu
+        ? (outrasPendentes ? "Salvar minhas correções e ir para a próxima" : "Salvar minhas correções e terminar")
+        : (outrasPendentes ? "Está tudo certo — ir para a próxima" : "Está tudo certo — terminar");
 
   return (
     <Tela>
-      <header className="topo">
-        <div className="contador">Camisa {idx + 1} de {camisas.length}</div>
-        <div className="progresso">{totalConfirmadas} já conferidas</div>
-      </header>
-
-      <p className="instrucao">
-        Olhe as fotos e confira os dados abaixo. Se estiver tudo certo, é só tocar no
-        botão verde. Se algo estiver errado, corrija antes de tocar nele.
-      </p>
+      {naFila ? (
+        <>
+          <header className="topo">
+            <div className="contador">
+              {pendentes === 1 ? "Falta 1 para conferir" : `Faltam ${pendentes} para conferir`}
+            </div>
+            <div className="progresso">{totalConfirmadas} já conferidas</div>
+          </header>
+          <button className="ver-todas" onClick={abrirLista}>Ver todas as camisas</button>
+          <p className="instrucao">
+            Olhe as fotos e confira os dados abaixo. Se estiver tudo certo, é só tocar no
+            botão verde. Se algo estiver errado, corrija antes de tocar nele.
+          </p>
+        </>
+      ) : (
+        <>
+          <button className="voltar-lista" onClick={() => setModo("lista")}>← Voltar para a lista</button>
+          {faixaContinuar}
+        </>
+      )}
 
       <div className="fotos">
         {atual.foto_frente && (
@@ -276,11 +392,7 @@ export default function Validador() {
       {erro && <p className="erro">{erro}</p>}
 
       <button className="confirmar" onClick={confirmar} disabled={salvando}>
-        {salvando
-          ? "Salvando…"
-          : mexeu
-            ? (ultima ? "Salvar minhas correções e terminar" : "Salvar minhas correções e ir para a próxima")
-            : (ultima ? "Está tudo certo — terminar" : "Está tudo certo — ir para a próxima")}
+        {textoBotao}
       </button>
 
       <p className="dica">
@@ -290,14 +402,84 @@ export default function Validador() {
       </p>
 
       <nav className="navegacao">
-        <button onClick={voltar} disabled={idx === 0 || salvando}>
-          ← Voltar para a anterior
-        </button>
+        {naFila ? (
+          <button onClick={voltar} disabled={idx === 0 || salvando}>
+            ← Voltar para a anterior
+          </button>
+        ) : (
+          <button onClick={() => setModo("lista")} disabled={salvando}>
+            ← Voltar para a lista sem salvar
+          </button>
+        )}
       </nav>
+    </Tela>
+  );
+}
 
-      {tudoPronto && (
-        <p className="fim">Você já conferiu todas as {camisas.length}. Obrigado!</p>
-      )}
+// Galeria de todas as camisas, com busca. Ele rola, acha e toca na que quer.
+function Lista({ camisas, busca, setBusca, ordem, setOrdem, aoAbrir, faixa }) {
+  const itens = useMemo(() => {
+    const termos = sem(busca).split(/\s+/).filter(Boolean);
+    const lista = camisas
+      .map((c, i) => ({ c, i }))
+      .filter(({ c }) => {
+        if (termos.length === 0) return true;
+        const texto = sem([c.time, apelidos(c.time), c.pais, c.ano, c.modelo, c.fornecedor, c.numero_nome].join(" "));
+        return termos.every((t) => texto.includes(t));
+      });
+    if (ordem === "nome") {
+      lista.sort((a, b) =>
+        (a.c.time || "").trim().localeCompare((b.c.time || "").trim(), "pt", { sensitivity: "base" }) ||
+        (a.c.ordem || 0) - (b.c.ordem || 0)
+      );
+    }
+    return lista;
+  }, [camisas, busca, ordem]);
+
+  return (
+    <Tela>
+      <h1 className="lista-titulo">Todas as camisas</h1>
+      {faixa}
+
+      <label className="busca">
+        <span>Procurar camisa</span>
+        <input
+          type="search"
+          value={busca}
+          onChange={(e) => setBusca(e.target.value)}
+          placeholder="Ex.: Galo, Boca, 2014, adidas"
+          enterKeyHint="search"
+        />
+      </label>
+
+      <div className="ordem" role="group" aria-label="Ordem da lista">
+        <button type="button" className={ordem === "nome" ? "sel" : ""} onClick={() => setOrdem("nome")}>Por nome do time</button>
+        <button type="button" className={ordem === "chegada" ? "sel" : ""} onClick={() => setOrdem("chegada")}>Por ordem de chegada</button>
+      </div>
+
+      <p className="contagem">
+        {busca.trim()
+          ? (itens.length === 0 ? "Nenhuma camisa encontrada." : `${itens.length} ${itens.length === 1 ? "camisa encontrada" : "camisas encontradas"}`)
+          : `${camisas.length} camisas`}
+      </p>
+
+      <div className="grade">
+        {itens.map(({ c, i }) => (
+          <button key={c.id} className="cartao" onClick={() => aoAbrir(i)}>
+            <img
+              src={miniatura(c.foto_frente)}
+              alt=""
+              loading="lazy"
+              onError={(e) => {
+                if (e.currentTarget.src !== c.foto_frente) e.currentTarget.src = c.foto_frente;
+              }}
+            />
+            <span className="cartao-time">{c.time}</span>
+            <span className="cartao-ano">{c.ano}</span>
+            {!c.revisado && <span className="cartao-falta">Falta conferir</span>}
+          </button>
+        ))}
+      </div>
     </Tela>
   );
 }
