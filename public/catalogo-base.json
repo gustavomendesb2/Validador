@@ -5836,5 +5836,33 @@
   "confianca": "alta",
   "fonte": "Arquivo de uniformes (Náutico 2026 Home, Reebok): listras vermelhas e brancas com gola azul — igual à peça; a de 2025 é da Diadora. Busca por imagem (24/09/2026, frente e costas): 'Camisa Reebok Home Náutico Masculina 26/27'. Primeiros uniformes da Reebok, lançados em 29/04/2026 (ge).",
   "lote": "lote 5"
+ },
+ "camisa_418": {
+  "id": "camisa_418",
+  "time": "Academia de Futebol Pérolas Negras",
+  "pais": "Brasil",
+  "ano": "2021",
+  "modelo": "Reserva (II)",
+  "fornecedor": "DNA",
+  "numero_nome": "8",
+  "oficial": "Sim",
+  "observacoes": "Camisa reserva do Pérolas Negras de 2021, feita pela DNA: branca, com espinhos em azul-marinho nos ombros e desenhos em traço fino no peito, inspirados nos vevês, os símbolos da cultura haitiana — está escrito 'Vevê' nas costas, acima da VRB e do número 8. A inspiração tem motivo: o time nasceu no Haiti, em 2009, como um projeto social do Viva Rio que junta futebol e estudo, e veio para o Rio de Janeiro em 2016.\n\nNota: A leitura dos desenhos como vevês vem da inscrição nas costas.",
+  "confianca": "alta",
+  "fonte": "Arquivo de uniformes (Pérolas Negras 2021 Away, DNA): branca com espinhos azul-marinho nos ombros, desenhos em traço no peito e a Sodexo — igual à peça; as reservas de 2022 e 2023 são de outra marca, com azul-royal e a VRB no peito. Busca por imagem (25/09/2026, frente e costas): 'Camisa De Futebol Perolas Negras Rj'. Nas costas, 'VEVE • FUTEBOL' e a VRB sobre o número 8 (leitura da foto). Time criado no Haiti em 2009 pelo Viva Rio como projeto social de futebol e educação, no Rio desde 2016 (Wikipédia; Viva Rio, 21/12/2021).",
+  "lote": "lote 6"
+ },
+ "camisa_419": {
+  "id": "camisa_419",
+  "time": "Clube Atlético Mineiro",
+  "pais": "Brasil",
+  "ano": "2026",
+  "modelo": "Terceira (III) - Rua de Fogo, versão torcedor",
+  "fornecedor": "Nike",
+  "numero_nome": "",
+  "oficial": "Sim",
+  "observacoes": "Terceira camisa do Atlético Mineiro de 2026, feita pela Nike, toda laranja com a gola e os punhos pretos e a H2bet no peito — ainda nova, com a etiqueta da loja. É a homenagem à Rua de Fogo: o ritual em que a Massa acende sinalizadores no caminho do ônibus do Galo antes dos jogos. O laranja da camisa foi escolhido para reproduzir o brilho desse fogo, e ela foi lançada em setembro de 2026.",
+  "confianca": "alta",
+  "fonte": "Arquivo de uniformes (Atlético Mineiro 2026 Third, Nike): laranja com gola e punhos pretos e a H2bet — o mesmo desenho, na versão de jogo com Multimarcas e Gerdau; a peça é a de torcedor, ainda com a etiqueta de loja. Busca por imagem (25/09/2026, frente e costas): 'Camisa do Atlético MG III 2026/27 Nike Torcedor'. Legenda do envio: 'Homenagem à Rua de Fogo'. Lançamento em 02/09/2026, com o laranja reproduzindo o brilho dos sinalizadores (atletico.com.br); a Rua de Fogo é o ritual da torcida que acende o caminho do time antes do jogo (nike.com.br).",
+  "lote": "lote 6"
  }
 }
