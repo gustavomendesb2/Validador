@@ -1,0 +1,26 @@
+# Segundo acesso ao banco, independente do cron da Vercel.
+# O plano grátis do Supabase pausa o projeto depois de uns sete dias sem uso.
+# Em 03/11/2026 ele pausou mesmo com o cron diário da Vercel, e o registro da
+# Vercel não guarda o bastante para saber se o cron rodou. Aqui cada execução
+# fica no histórico do GitHub Actions, e falha visível quando o banco não responde.
+name: Manter o banco ativo
+
+on:
+  schedule:
+    - cron: "17 9,21 * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ler uma linha do banco pelo app
+        run: |
+          for i in 1 2 3; do
+            resp=$(curl -s -m 60 https://validador-ylow.vercel.app/api/manter-ativo || true)
+            echo "tentativa $i: $resp"
+            echo "$resp" | grep -q '"ok":true' && exit 0
+            sleep 20
+          done
+          exit 1
